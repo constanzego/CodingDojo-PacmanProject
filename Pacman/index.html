@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pacman Demo</title>
+	<style type="text/css">
+		body{
+			background-color: white;
+			margin:0px;
+		}
+		div.row div{
+			width: 25px;
+			height: 25px; 
+			display: inline-block;
+		}
+		div.row {
+			height: 25px; 
+			
+		}
+		div.brick{
+			background-color: blue;
+		}
+		div.coin{
+			background: url('coin.gif');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: contain; 
+		}
+		div.empty{
+
+		}
+		div#pacman{
+			background: url('pacman.gif');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 25px;
+			height: 25px;
+			position:absolute;
+		}
+		div#pacman2{
+			background: url('pacman.gif');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 25px;
+			height: 25px;
+			position:absolute;
+		}
+		div#score{
+			border:1px solid white;
+			width: 30px;
+			height: 20px; 
+			color: white; 
+			padding: 7px;
+			text-align: center;
+			position: absolute;
+			top:10px;
+			left:210px;
+		}
+		div.titulo{
+			height: 50px;
+			background-color: blue;
+		}
+		div.ghost{
+			background: url('ghost.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 20px;
+			height: 20px;
+		}
+		div#ghost1{
+			background: url('ghost1.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 20px;
+			height: 20px;
+			position: absolute;
+		}
+		div.ghost1{
+			background: url('ghost1.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 20px;
+			height: 20px;
+		}
+		div#ghost{
+			background: url('ghost.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 20px;
+			height: 20px;
+			position: absolute;
+		}
+		div.cherry{
+			background: url('cherry.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 20px;
+			height: 20px;
+			
+		}
+	</style>
+</head>
+<body>
+<div id='containter'>
+	<div class=titulo >PAC MAN</div>
+	<div id='world'></div>
+	<div id='pacman'></div>
+	<div id='pacman2'></div>
+	<h1 id='score'>SCORE: 0</h1>
+	<div id='ghost'></div>
+	<div id='ghost1'></div>
+	<div id='cherry'></div>
+<audio controls autoplay loop>
+	<source src="sound.mp3.mp3" type="audio/mpeg">
+</audio>
+
+</div>
+
+ <script>
+
+var dir=0;
+var dir2=0;
+var dirghost=0;
+var dirghost1=0;
+var world = [
+	[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+	[2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+	[2,1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,2,2,2,2,2,1,1,1,1,1,1,2],
+	[2,2,2,2,2,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,1,1,1,1,1,1,2],
+	[2,1,1,1,2,1,1,2,2,2,2,2,1,1,1,2,1,1,1,1,2,2,2,1,1,2,2,2,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+	[2,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+	[2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,1,2,1,1,1,4,1,1,2,1,2,2,2,2,1,1,1,1,1,1,2,2,2,2,2,2,2,1,1,1,1,2],
+	[2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,2,1,2],
+	[2,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,2,2,1,1,2,2,2,1,1,1,1,2,1,1,1,1,2,1,1,1,1,2,1,1,1,4,1,2,1,2],
+	[2,2,2,2,2,1,1,2,2,2,2,2,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,1,1,1,2,1,1,1,1,1,2,1,2],
+	[2,1,1,1,2,1,1,2,2,2,2,2,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,2,2,2,1,1,2,2,2,2,1,1,2,2,2,1,2],
+	[2,1,1,1,2,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,2,2,2,1,1,1,1,2,1,2],
+	[2,1,4,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,1,1,2,2,2,1,1,1,1,1,1,1,2,2,2,1,1,1,1,1,1,1,1,1,1,2,1,2],
+	[2,1,1,1,2,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1,2,1,2],
+	[2,2,2,2,2,1,1,2,2,2,2,2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+	[2,1,1,1,2,1,1,2,2,2,2,2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+	[2,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,2,2,2,2,2,2,2,1,1,1,2],
+	[2,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,1,1,1,1,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,2],
+	[2,1,4,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,4,1,1,2],
+	[2,1,1,1,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,2],
+	[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+];
+var score=0;
+
+var pacman = {
+	x:22,
+	y:15
+};
+var pacman2 = {
+	x:22,
+	y:16
+};
+
+var ghost = {
+	x:33,
+	y:16
+};	
+
+var ghost1 = {
+	x:13,
+	y:16
+};	
+	
+var cherry={
+	x:30,
+	y:20
+};
+var cherry_count=0;
+
+function displayWorld(){
+	var output = '';
+	var cherry_count = 0;
+	for(var i=0; i<world.length; i++){
+		output += "<div class='row'>";
+		for(var j=0; j<world[i].length; j++){
+			if (world[i][j]==2)
+				output += "<div class='brick'></div>";
+			if (world[i][j]==1)
+				output += "<div class='coin'></div>";
+			if (world[i][j]==0)
+				output += "<div class='empty'></div>";
+			if (world[i][j]==3)
+				output += "<div class='ghost'></div>";
+			if (world[i][j]==4){
+				output += "<div class='cherry'></div>";
+				cherry_count++;{			
+				}
+			}
+		}
+		output +="</div>";
+	}
+	//console.log(output);
+		document.getElementById('world').innerHTML =output;
+}
+
+function displayPacman(){
+	document.getElementById('pacman').style.top = pacman.y*25+50+"px";
+	document.getElementById('pacman').style.left = pacman.x*25+1+"px";
+}
+
+function displayPacman2(){
+	document.getElementById('pacman2').style.top = pacman2.y*25+50+"px";
+	document.getElementById('pacman2').style.left = pacman2.x*25+1+"px";
+}
+function displayScore(){
+	document.getElementById('score').innerHTML = score;
+}
+function displayGhost(){
+	document.getElementById('ghost').style.top = ghost.y*25+50+"px";
+	document.getElementById('ghost').style.left = ghost.x*25+1+"px";}
+
+function displayGhost1(){
+	document.getElementById('ghost1').style.top = ghost1.y*25+50+"px";
+	document.getElementById('ghost1').style.left = ghost1.x*25+1+"px";}	
+
+displayWorld();
+displayPacman();
+displayPacman2();
+displayScore();
+displayGhost();
+displayGhost1();
+
+setInterval(movimiento, 500);
+function moverPacman(){
+	//movemos el pacman
+	if(dir == 1){
+		pacman.x--;
+	}else if(dir == 2){
+		pacman.x++;
+	}else if(dir == 3){
+		pacman.y--;
+	}else if(dir == 4){
+		pacman.y++;
+	}
+}
+function moverPacman2(){
+	//movemos el pacman
+	if(dir2 == 1){
+		pacman2.x--;
+	}else if(dir2 == 2){
+		pacman2.x++;
+	}else if(dir2 == 3){
+		pacman2.y--;
+	}else if(dir2 == 4){
+		pacman2.y++;
+	}
+}
+
+function movimiento(){
+	//gano o pierdo
+	if(world[pacman.y][pacman.x] == 1){
+		world[pacman.y][pacman.x] = 0;
+		score += 10;
+	}
+	if(world[pacman.y][pacman.x] == 4){
+		world[pacman.y][pacman.x] = 0;
+		score += 30;
+	}
+	if(world[pacman.y][pacman.x] == 3){
+		world[pacman.y][pacman.x] = 0;
+		score -= 100;
+	}
+	if(pacman.y==ghost.y && pacman.x==ghost.x){
+		score = 0;
+		alert('perdedor');
+	}
+	if(pacman.y==ghost1.y && pacman.x==ghost1.x){
+		score = 0;
+		alert('perdedor');
+	}
+	if(world[pacman2.y][pacman2.x] == 1){
+		world[pacman2.y][pacman2.x] = 0;
+		score += 10;
+	}
+	if(world[pacman2.y][pacman2.x] == 4){
+		world[pacman2.y][pacman2.x] = 0;
+		score += 30;
+	}
+	if(world[pacman2.y][pacman2.x] == 3){
+		world[pacman2.y][pacman2.x] = 0;
+		score -= 100;
+	}
+	if(pacman2.y==ghost.y && pacman2.x==ghost.x){
+		score = 0;
+		alert('perdedor');
+	}
+	if(pacman2.y==ghost1.y && pacman2.x==ghost1.x){
+		score = 0;
+		alert('perdedor');
+	}
+
+	//verifico que no choque y si choco freno
+	if(dir == 1 && world[pacman.y][pacman.x-1] == 2){
+		dir = 0;
+	}else if(dir==2 && world[pacman.y][pacman.x+1] == 2){
+		dir = 0;
+	}else if(dir==3 && world[pacman.y-1][pacman.x] == 2){
+		dir = 0;
+	}else if(dir== 4 && world[pacman.y+1][pacman.x] == 2){
+		dir = 0;
+	}
+	if(dir2 == 1 && world[pacman2.y][pacman2.x-1] == 2){
+		dir2 = 0;
+	}else if(dir2==2 && world[pacman2.y][pacman2.x+1] == 2){
+		dir2 = 0;
+	}else if(dir2==3 && world[pacman2.y-1][pacman2.x] == 2){
+		dir2 = 0;
+	}else if(dir2== 4 && world[pacman2.y+1][pacman2.x] == 2){
+		dir2 = 0;
+	}
+	moverPacman();
+	moverPacman2();	
+	moverghost();
+	moveGhost();
+	moverghost1();
+	moveGhost1();
+	displayWorld();
+	displayScore();
+	displayPacman();
+	displayPacman2();
+	displayGhost();	
+	displayGhost1();
+
+}
+document.onkeydown= function(e){
+
+	if(e.keyCode == 37 && world[pacman.y][pacman.x-1] != 2){
+		dir = 1;
+		document.getElementById('pacman').style.transform='rotate(180deg)'
+	
+	}else if(e.keyCode== 39 && world[pacman.y][pacman.x+1] != 2){
+		dir = 2;
+		document.getElementById('pacman').style.transform='rotate(0deg)'
+	
+	}else if(e.keyCode== 38 && world[pacman.y-1][pacman.x] != 2){
+		dir = 3;
+		document.getElementById('pacman').style.transform='rotate(270deg)'
+	
+	}else if(e.keyCode== 40 && world[pacman.y+1][pacman.x] != 2){
+		dir = 4;
+		document.getElementById('pacman').style.transform='rotate(90deg)'
+	}
+	
+	if(e.keyCode == 65 && world[pacman2.y][pacman2.x-1] != 2){
+		dir2 = 1;
+		document.getElementById('pacman2').style.transform='rotate(180deg)'
+	
+	}else if(e.keyCode== 68 && world[pacman2.y][pacman2.x+1] != 2){
+		dir2 = 2;
+		document.getElementById('pacman2').style.transform='rotate(0deg)'
+	
+	}else if(e.keyCode== 87 && world[pacman2.y-1][pacman2.x] != 2){
+		dir2 = 3;
+		document.getElementById('pacman2').style.transform='rotate(270deg)'
+	
+	}else if(e.keyCode== 83 && world[pacman2.y+1][pacman2.x] != 2){
+		dir2 = 4;
+		document.getElementById('pacman2').style.transform='rotate(90deg)'
+	}
+}
+
+//ghosts
+function moveGhost(){
+	//movemos el fantasma
+	if(dirghost == 1){
+		ghost.x--;
+	}else if(dirghost == 2){
+		ghost.x++;
+	}else if(dirghost == 3){
+		ghost.y--;
+	}else if(dirghost == 4){
+		ghost.y++;
+	}
+}
+
+function moverghost(){
+	dirghost = Math.floor(Math.random()*4)+1;
+
+	if(dirghost == 1 && world[ghost.y][ghost.x-1] == 2){
+		dirghost = 0;
+	}else if(dirghost==2 && world[ghost.y][ghost.x+1] == 2){
+
+		dirghost = 0;
+	}else if(dirghost==3 && world[ghost.y-1][ghost.x] == 2){
+
+		dirghost = 0;
+	}else if(dirghost== 4 && world[ghost.y+1][ghost.x] == 2){
+		dirghost = 0;
+	}
+}
+
+function moveGhost1(){
+	//movemos el fantasma
+	if(dirghost1 == 1){
+		ghost1.x--;
+	}else if(dirghost1 == 2){
+		ghost1.x++;
+	}else if(dirghost1 == 3){
+		ghost1.y--;
+	}else if(dirghost1 == 4){
+		ghost1.y++;
+	}
+}
+
+function moverghost1(){
+	dirghost1 = Math.floor(Math.random()*4)+1;
+
+	if(dirghost1 == 1 && world[ghost1.y][ghost1.x-1] == 2){
+		dirghost1 = 0;
+	}else if(dirghost1==2 && world[ghost1.y][ghost1.x+1] == 2){
+
+		dirghost1 = 0;
+	}else if(dirghost1==3 && world[ghost1.y-1][ghost1.x] == 2){
+
+		dirghost1 = 0;
+	}else if(dirghost1== 4 && world[ghost1.y+1][ghost1.x] == 2){
+		dirghost1 = 0;
+	}
+
+}
+
+</script>
+</body>
+</html>
+
+
+

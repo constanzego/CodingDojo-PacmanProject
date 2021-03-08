@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>papa Demo</title>
+	<style type="text/css">
+		body{
+			background-color: white;
+			margin:0px;
+		}
+		div.row div{
+			width: 30px;
+			height: 30px; 
+			display: inline-block;
+		}
+		div.row {
+			height: 30px; 
+			
+		}
+		div.brick{
+			background-color: blue;
+		}
+		div.coin{
+			background: url('cookie.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: contain; 
+		}
+		div.empty{
+
+		}
+		div#papa{
+			background: url('papa.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 30px;
+			height: 30px;
+			position:absolute;
+		}
+		div#score{
+			border:1px solid white;
+			width: 30px;
+			height: 20px; 
+			color: white; 
+			padding: 7px;
+			text-align: center;
+			position: absolute;
+			top:10px;
+			left:210px;
+		}
+		div.titulo{
+			height: 50px;
+			background-color: blue;
+		}
+		div.lupe{
+			background: url('lupe.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 30px;
+			height: 30px;
+		}
+		div#azula{
+			background: url('azula.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 30px;
+			height: 30px;
+			position: absolute;
+		}
+		div.azula{
+			background: url('azula.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 30px;
+			height: 30px;
+		}
+		div#lupe{
+			background: url('lupe.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 30px;
+			height: 30px;
+			position: absolute;
+		}
+		div.cherry{
+			background: url('fish.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			width: 20px;
+			height: 20px;
+			
+		}
+	</style>
+</head>
+<body>	
+<div id='containter'>
+	<div class=titulo >PAC MAN</div>
+	<div id='world'></div>
+	<div id='papa'></div>
+	<h1 id='score'>SCORE: 0</h1>
+	<div id='lupe'></div>
+	<div id='azula'></div>
+	<div id='cherry'></div>
+<audio controls autoplay loop>
+	<source src="sound.mp3.mp3" type="audio/mpeg">
+</audio>
+
+</div>
+
+ <script>
+
+var dir=0;
+var dir2=0;
+var dirlupe=0;
+var dirazula=0;
+var world = [
+	[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+	[2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+	[2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+	[2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+	[2,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,1,1,2],
+	[2,1,1,1,2,1,1,1,1,1,2,1,1,1,1,2,1,1,2],
+	[2,1,1,1,2,1,1,1,1,1,2,1,1,1,1,2,1,1,2],
+	[2,1,1,1,2,1,1,1,1,1,2,1,1,1,1,2,1,1,2],
+	[2,1,1,1,2,1,1,1,1,1,2,1,1,1,1,2,1,1,2],
+	[2,1,1,1,2,2,2,2,1,1,1,1,1,1,1,2,1,1,2],
+	[2,1,1,1,2,1,1,1,1,1,2,1,1,1,1,2,1,1,2],
+	[2,1,1,1,2,1,1,2,1,1,2,2,2,2,2,2,1,1,2],
+	[2,2,1,2,2,1,1,2,1,1,2,1,1,1,1,2,1,1,2],
+	[2,1,1,4,2,1,1,2,1,1,2,1,1,1,1,2,1,1,2],
+	[2,4,1,4,2,2,2,2,1,1,2,1,1,1,1,2,2,1,2],
+	[2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+	[2,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,1,2],
+	[2,1,1,1,2,2,2,2,1,1,2,2,2,2,2,2,1,1,2],
+	[2,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,2],
+	[2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,2],
+	[2,1,1,1,1,1,1,1,1,1,1,1,1,1,4,2,1,1,2],
+	[2,1,1,1,1,1,1,1,1,1,1,1,1,1,4,2,1,1,2],
+	[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+];
+var score=0;
+
+var papa = {
+	x:7,
+	y:5
+};
+
+var lupe = {
+	x:15,
+	y:20
+};	
+
+var azula = {
+	x:5,
+	y:15
+};	
+	
+var cherry={
+	x:30,
+	y:20
+};
+var cherry_count=0;
+
+function displayWorld(){
+	var output = '';
+	var cherry_count = 0;
+	for(var i=0; i<world.length; i++){
+		output += "<div class='row'>";
+		for(var j=0; j<world[i].length; j++){
+			if (world[i][j]==2)
+				output += "<div class='brick'></div>";
+			if (world[i][j]==1)
+				output += "<div class='coin'></div>";
+			if (world[i][j]==0)
+				output += "<div class='empty'></div>";
+			if (world[i][j]==3)
+				output += "<div class='lupe'></div>";
+			if (world[i][j]==4){
+				output += "<div class='cherry'></div>";
+				cherry_count++;{			
+				}
+			}
+		}
+		output +="</div>";
+	}
+	//console.log(output);
+		document.getElementById('world').innerHTML =output;
+}
+
+function displaypapa(){
+	document.getElementById('papa').style.top = papa.y*30+50+"px";
+	document.getElementById('papa').style.left = papa.x*30+1+"px";
+}
+
+function displayScore(){
+	document.getElementById('score').innerHTML = score;
+}
+function displaylupe(){
+	document.getElementById('lupe').style.top = lupe.y*30+50+"px";
+	document.getElementById('lupe').style.left = lupe.x*30+1+"px";}
+
+function displayazula(){
+	document.getElementById('azula').style.top = azula.y*30+50+"px";
+	document.getElementById('azula').style.left = azula.x*30+1+"px";}	
+
+displayWorld();
+displaypapa();
+displayScore();
+displaylupe();
+displayazula();
+
+setInterval(movimiento, 500);
+function moverpapa(){
+	//movemos el papa
+	if(dir == 1){
+		papa.x--;
+	}else if(dir == 2){
+		papa.x++;
+	}else if(dir == 3){
+		papa.y--;
+	}else if(dir == 4){
+		papa.y++;
+	}
+}
+
+function movimiento(){
+	//gano o pierdo
+	if(world[papa.y][papa.x] == 1){
+		world[papa.y][papa.x] = 0;
+		score += 10;
+	}
+	if(world[papa.y][papa.x] == 4){
+		world[papa.y][papa.x] = 0;
+		score += 30;
+	}
+	if(world[papa.y][papa.x] == 3){
+		world[papa.y][papa.x] = 0;
+		score -= 100;
+	}
+	if(papa.y==lupe.y && papa.x==lupe.x){
+		score = 0;
+		alert('perdedor');
+	}
+	if(papa.y==azula.y && papa.x==azula.x){
+		score = 0;
+		alert('perdedor');
+	}
+
+
+	//verifico que no choque y si choco freno
+	if(dir == 1 && world[papa.y][papa.x-1] == 2){
+		dir = 0;
+	}else if(dir==2 && world[papa.y][papa.x+1] == 2){
+		dir = 0;
+	}else if(dir==3 && world[papa.y-1][papa.x] == 2){
+		dir = 0;
+	}else if(dir== 4 && world[papa.y+1][papa.x] == 2){
+		dir = 0;
+	}
+
+	moverpapa();
+	moverlupe();
+	movelupe();
+	moverazula();
+	moveazula();
+	displayWorld();
+	displayScore();
+	displaypapa();
+	displaylupe();	
+	displayazula();
+
+}
+document.onkeydown= function(e){
+
+	if(e.keyCode == 37 && world[papa.y][papa.x-1] != 2){
+		dir = 1;
+	
+	}else if(e.keyCode== 39 && world[papa.y][papa.x+1] != 2){
+		dir = 2;
+	
+	}else if(e.keyCode== 38 && world[papa.y-1][papa.x] != 2){
+		dir = 3;
+	
+	}else if(e.keyCode== 40 && world[papa.y+1][papa.x] != 2){
+		dir = 4;
+	}
+}
+
+//ghosts
+function movelupe(){
+	//movemos el fantasma
+	if(dirlupe == 1){
+		lupe.x--;
+	}else if(dirlupe == 2){
+		lupe.x++;
+	}else if(dirlupe == 3){
+		lupe.y--;
+	}else if(dirlupe == 4){
+		lupe.y++;
+	}
+}
+
+function moverlupe(){
+	dirlupe = Math.floor(Math.random()*4)+1;
+
+	if(dirlupe == 1 && world[lupe.y][lupe.x-1] == 2){
+		dirlupe = 0;
+	}else if(dirlupe==2 && world[lupe.y][lupe.x+1] == 2){
+		dirlupe = 0;
+	}else if(dirlupe==3 && world[lupe.y-1][lupe.x] == 2){
+		dirlupe = 0;
+	}else if(dirlupe== 4 && world[lupe.y+1][lupe.x] == 2){
+		dirlupe = 0;
+	}
+}
+
+function moveazula(){
+	//movemos el fantasma
+	if(dirazula == 1){
+		azula.x--;
+	}else if(dirazula == 2){
+		azula.x++;
+	}else if(dirazula == 3){
+		azula.y--;
+	}else if(dirazula == 4){
+		azula.y++;
+	}
+}
+
+function moverazula(){
+	dirazula = Math.floor(Math.random()*4)+1;
+
+	if(dirazula == 1 && world[azula.y][azula.x-1] == 2){
+		dirazula = 0;
+	}else if(dirazula==2 && world[azula.y][azula.x+1] == 2){
+		dirazula = 0;
+	}else if(dirazula==3 && world[azula.y-1][azula.x] == 2){
+		dirazula = 0;
+	}else if(dirazula== 4 && world[azula.y+1][azula.x] == 2){
+		dirazula = 0;
+	}
+}
+
+</script>
+</body>
+</html>
+
+
+
